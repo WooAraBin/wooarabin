@@ -67,7 +67,7 @@ export async function PATCH(req, { params }) {
 
     const { error } = await getSupabaseAdmin()
       .from('inquiries')
-      .update({ status: 'quoted', review_note: quoteNote })
+      .update({ status: 'quoted', quote_note: quoteNote })
       .eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

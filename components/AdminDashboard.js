@@ -166,8 +166,13 @@ export default function AdminDashboard({ initialInquiries }) {
               </Section>
 
               {selected.review_note && (
-                <Section title="검토/견적 내용">
+                <Section title="검토 내용">
                   <p style={{ fontSize: 14, lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0, padding: '12px 16px' }}>{selected.review_note}</p>
+                </Section>
+              )}
+              {selected.quote_note && (
+                <Section title="견적 내용">
+                  <p style={{ fontSize: 14, lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0, padding: '12px 16px' }}>{selected.quote_note}</p>
                 </Section>
               )}
 
@@ -295,8 +300,7 @@ function StartReviewPanel({ inquiry, patch, onUpdate }) {
 
 function SendQuotePanel({ inquiry, patch, onUpdate }) {
   const [note, setNote] = useState(
-    inquiry.review_note ||
-    `[견적 금액]\n\n\n[작업 범위]\n\n\n[기타 안내]\n`
+    `[견적 금액]\n예) 웹사이트 개발: 000만원\n\n[작업 범위]\n\n\n[예상 일정]\n요청하신 기한(${inquiry.deadline || '협의'}) 내 완료 예정\n\n[기타 안내]\n\n`
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

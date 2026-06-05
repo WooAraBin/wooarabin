@@ -135,6 +135,14 @@ export default function CustomerPortal({ inquiries }) {
             </div>
           </div>
 
+          {/* 견적 내용 */}
+          {selectedInq.quote_note && ['quoted', 'in_progress', 'pending_payment', 'completed'].includes(selectedInq.status) && (
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', background: 'rgba(245,158,11,0.04)' }}>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>견적 내용</h3>
+              <p style={{ fontSize: 13, lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0, color: 'var(--fg)' }}>{selectedInq.quote_note}</p>
+            </div>
+          )}
+
           {/* 진행 현황 타임라인 */}
           {selectedInq.status !== 'received' && (
             <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)' }}>
