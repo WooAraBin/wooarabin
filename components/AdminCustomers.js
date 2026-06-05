@@ -38,7 +38,7 @@ export default function AdminCustomers({ customers }) {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: 'var(--card)', borderBottom: '1px solid var(--border)' }}>
-                {['이메일', '이름', '가입일', 'Remark'].map(h => (
+                {['이메일', '이름', '연락처', '가입일', 'Remark'].map(h => (
                   <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--fg2)' }}>{h}</th>
                 ))}
               </tr>
@@ -50,6 +50,12 @@ export default function AdminCustomers({ customers }) {
                     <a href={`mailto:${u.email}`} style={{ color: 'var(--accent)' }}>{u.email}</a>
                   </td>
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)' }}>{u.name || '-'}</td>
+                  <td style={{ padding: '12px 16px', color: 'var(--fg2)' }}>
+                    {(() => {
+                      const phone = u.inquiries?.find(i => i.phone_number)?.phone_number
+                      return phone ? <a href={`tel:${phone}`} style={{ color: 'var(--accent)' }}>{phone}</a> : '-'
+                    })()}
+                  </td>
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)', whiteSpace: 'nowrap' }}>
                     {new Date(u.created_at).toLocaleDateString('ko-KR')}
                   </td>
