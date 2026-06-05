@@ -207,7 +207,12 @@ function ActionPanel({ inquiry, onUpdate }) {
     return <StartWorkPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
   }
   if (inquiry.status === 'in_progress') {
-    return <DeliveryPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+    return (
+      <>
+        <InterimFilesPanel inquiry={inquiry} />
+        <DeliveryPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+      </>
+    )
   }
   if (inquiry.status === 'completed') {
     return (
@@ -332,6 +337,88 @@ function StartWorkPanel({ inquiry, patch, onUpdate }) {
         작업 시작 — 진행중으로 전환
       </ActionBtn>
     </ActionBox>
+  )
+}
+
+function InterimFilesPanel({ inquiry }) {
+  const [files, setFiles] = useState(null)
+  const [file, setFile] = useState(null)
+  const [note, setNote] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const fileRef = useRef()
+
+  async function load() {
+    if (files !== null) return
+    const res = await fetch(`/api/admin/inquiries/${inquiry.id}/files`)
+    const data = await res.json()
+    setFiles(Array.isArray(data) ? data : [])
+  }
+
+  async function toggle() {
+    if (!open) await load()
+    setOpen(o => !o)
+  }
+
+  async function upload() {
+    if (!file) return
+    setUploading(true)
+    const form = new FormData()
+    form.append('file', file)
+    form.append('note', note)
+    const res = await fetch(`/api/admin/inquiries/${inquiry.id}/files`, { method: 'POST', body: form })
+    if (res.ok) {
+      const newFile = await res.json()
+      setFiles(f => [newFile, ...(f || [])])
+      setFile(null)
+      setNote('')
+      fileRef.current.value = ''
+    }
+    setUploading(false)
+  }
+
+  return (
+    <div style={{ marginTop: 12, border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+      <button onClick={toggle} style={{
+        width: '100%', padding: '12px 18px', background: 'rgba(16,185,129,0.06)', border: 'none',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        cursor: 'pointer', fontFamily: 'inherit',
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#10b981' }}>📁 중간 자료 전달 {files !== null ? `(${files.length}건)` : ''}</span>
+        <span style={{ fontSize: 11, color: 'var(--fg2)' }}>{open ? '닫기 ▲' : '열기 ▼'}</span>
+      </button>
+      {open && (
+        <div style={{ padding: '14px 18px', borderTop: '1px solid var(--border)' }}>
+          {files?.length > 0 && (
+            <div style={{ marginBottom: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {files.map(f => (
+                <div key={f.id} style={{ padding: '8px 12px', background: 'var(--card)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <a href={f.file_url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 600 }}>📎 {f.file_name}</a>
+                    <span style={{ fontSize: 11, color: 'var(--fg2)' }}>{new Date(f.created_at).toLocaleString('ko-KR')}</span>
+                  </div>
+                  {f.note && <p style={{ fontSize: 12, color: 'var(--fg2)', margin: '4px 0 0', whiteSpace: 'pre-wrap' }}>{f.note}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ marginBottom: 8 }}>
+            <div onClick={() => fileRef.current.click()} style={{ padding: '10px', border: '2px dashed var(--border)', borderRadius: 8, cursor: 'pointer', textAlign: 'center', fontSize: 13, color: file ? 'var(--fg)' : 'var(--fg2)' }}>
+              {file ? file.name : '파일 선택'}
+            </div>
+            <input ref={fileRef} type="file" style={{ display: 'none' }} onChange={e => setFile(e.target.files[0])} />
+          </div>
+          <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="전달 메모 (선택)" rows={2} style={{ ...textareaStyle, marginBottom: 8 }} />
+          <button onClick={upload} disabled={!file || uploading} style={{
+            padding: '8px 16px', background: !file ? 'var(--border)' : '#10b981', color: '#fff',
+            border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700,
+            cursor: !file ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+          }}>
+            {uploading ? '전송 중...' : '파일 전달 + 고객 알림'}
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 

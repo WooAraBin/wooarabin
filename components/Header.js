@@ -28,13 +28,11 @@ export default async function Header() {
                   <Link href="/admin?tab=customers" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>고객현황</Link>
                 </>
               )}
-              <Link href="/portal" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {session.user?.image && (
-                  <img src={session.user.image} alt="" width={28} height={28}
-                    style={{ borderRadius: '50%', border: '2px solid var(--border)' }} />
-                )}
-                <span style={{ fontSize: 13, color: 'var(--fg2)' }}>{session.user?.name}</span>
-              </Link>
+              <Link href="/portal" style={{ fontSize: 13, color: 'var(--fg2)' }}>내 프로젝트</Link>
+              {session.user?.image && (
+                <img src={session.user.image} alt="" width={28} height={28}
+                  style={{ borderRadius: '50%', border: '2px solid var(--border)' }} />
+              )}
               <form action={async () => { 'use server'; await signOut({ redirectTo: '/' }) }}>
                 <button type="submit" style={{
                   background: 'none', border: '1px solid var(--border)',
