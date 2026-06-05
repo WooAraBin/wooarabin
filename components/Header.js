@@ -22,7 +22,11 @@ export default async function Header() {
             // 로그인 상태
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               {session.user?.role === 'admin' && (
-                <Link href="/admin" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>관리자</Link>
+                <>
+                  <Link href="/admin?tab=inquiries" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>의뢰관리</Link>
+                  <Link href="/admin?tab=revenue" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>매출현황</Link>
+                  <Link href="/admin?tab=customers" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>고객현황</Link>
+                </>
               )}
               <Link href="/portal" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {session.user?.image && (
