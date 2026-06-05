@@ -262,7 +262,7 @@ function StartReviewPanel({ inquiry, patch, onUpdate }) {
 function SendQuotePanel({ inquiry, patch, onUpdate }) {
   const [note, setNote] = useState(
     inquiry.review_note ||
-    `안녕하세요, ${inquiry.user_name}님.\n\n프로젝트 "${inquiry.title}"에 대한 견적을 안내드립니다.\n\n[견적 내용을 여기에 작성해주세요]\n\n문의사항은 이 메일에 회신해 주세요.\n감사합니다.\n우아라빈 드림`
+    `[견적 금액]\n\n\n[작업 범위]\n\n\n[기타 안내]\n`
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
