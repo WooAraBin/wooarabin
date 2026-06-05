@@ -15,18 +15,6 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh' }}>
 
-      {/* Nav */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, borderBottom: '1px solid var(--border)', background: 'rgba(10,10,10,0.92)', backdropFilter: 'blur(12px)' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-          <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px' }}>우아라빈</span>
-          <div style={{ display: 'flex', gap: 32, fontSize: 13, color: 'var(--fg2)' }}>
-            <Link href="#work">작업물</Link>
-            <Link href="#services">서비스</Link>
-            <Link href="/contact" style={{ color: 'var(--accent)', fontWeight: 700 }}>의뢰하기</Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero */}
       <section style={{ paddingTop: 160, paddingBottom: 120 }}>
         <div className="container">

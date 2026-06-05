@@ -1,4 +1,5 @@
 import './globals.css'
+import Header from '@/components/Header'
 
 export const metadata = {
   title: '우아라빈 — Web & App Development',
@@ -12,7 +13,10 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://cdn.jsdelivr.net" />
         <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }
