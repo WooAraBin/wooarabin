@@ -3,13 +3,14 @@
 import { useState, useRef } from 'react'
 
 const STATUS_LABELS = {
-  received:    { label: '접수',    color: '#6b7280' },
-  reviewing:   { label: '검토중',  color: '#3b82f6' },
-  quoted:      { label: '견적발송', color: '#f59e0b' },
-  in_progress: { label: '진행중',  color: '#10b981' },
-  completed:   { label: '완료',    color: '#8b5cf6' },
+  received:        { label: '접수',         color: '#6b7280' },
+  reviewing:       { label: '검토중',        color: '#3b82f6' },
+  quoted:          { label: '견적발송',      color: '#f59e0b' },
+  in_progress:     { label: '진행중',        color: '#10b981' },
+  pending_payment: { label: '완료·입금대기', color: '#f97316' },
+  completed:       { label: '최종완료',      color: '#8b5cf6' },
 }
-const STATUS_ORDER = ['received', 'reviewing', 'quoted', 'in_progress', 'completed']
+const STATUS_ORDER = ['received', 'reviewing', 'quoted', 'in_progress', 'pending_payment', 'completed']
 
 export default function AdminDashboard({ initialInquiries }) {
   const [inquiries, setInquiries] = useState(initialInquiries)
@@ -173,6 +174,9 @@ export default function AdminDashboard({ initialInquiries }) {
               {/* 단계별 액션 패널 */}
               <ActionPanel inquiry={selected} onUpdate={updateInquiry} />
 
+              {/* 고객 문의 */}
+              <CustomerMessages inquiryId={selected.id} />
+
               {/* 내부 메모 */}
               <InquiryNotes inquiryId={selected.id} />
 
@@ -213,10 +217,13 @@ function ActionPanel({ inquiry, onUpdate }) {
       </>
     )
   }
+  if (inquiry.status === 'pending_payment') {
+    return <PendingPaymentPanel inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  }
   if (inquiry.status === 'completed') {
     return (
       <div style={{ padding: '20px 0', color: '#8b5cf6', fontWeight: 700, fontSize: 15 }}>
-        ✓ 완료된 프로젝트입니다.
+        ✓ 최종 완료된 프로젝트입니다.
         {inquiry.delivery_file_url && (
           <div style={{ marginTop: 8 }}>
             <a href={inquiry.delivery_file_url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 400 }}>결과물 파일 보기 →</a>
@@ -226,6 +233,28 @@ function ActionPanel({ inquiry, onUpdate }) {
     )
   }
   return null
+}
+
+function PendingPaymentPanel({ inquiry, patch, onUpdate }) {
+  const [loading, setLoading] = useState(false)
+
+  async function handleFinalComplete() {
+    setLoading(true)
+    const res = await patch({ action: 'final_complete' })
+    if (res.ok) onUpdate({ ...inquiry, status: 'completed' })
+    setLoading(false)
+  }
+
+  return (
+    <ActionBox title="완료 및 입금 대기" description="고객이 결과물을 확인하고 완료 처리했습니다. 입금 확인 후 최종 완료하세요.">
+      <div style={{ padding: '12px 0', fontSize: 13, color: 'var(--fg2)', marginBottom: 12 }}>
+        고객 완료 확인일: <strong style={{ color: 'var(--fg)' }}>{inquiry.completed_at ? new Date(inquiry.completed_at).toLocaleDateString('ko-KR') : '-'}</strong>
+      </div>
+      <ActionBtn loading={loading} color="#8b5cf6" onClick={handleFinalComplete}>
+        입금 확인 완료 — 최종완료 처리
+      </ActionBtn>
+    </ActionBox>
+  )
 }
 
 function StartReviewPanel({ inquiry, patch, onUpdate }) {
@@ -536,6 +565,53 @@ const inputStyle = {
 }
 const labelStyle = {
   display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--fg2)', marginBottom: 6,
+}
+
+// 고객 문의 메시지
+function CustomerMessages({ inquiryId }) {
+  const [messages, setMessages] = useState(null)
+  const [open, setOpen] = useState(false)
+
+  async function load() {
+    if (messages !== null) return
+    const res = await fetch(`/api/admin/messages?inquiryId=${inquiryId}`)
+    const data = await res.json()
+    setMessages(Array.isArray(data) ? data : [])
+  }
+
+  async function toggle() {
+    if (!open) await load()
+    setOpen(o => !o)
+  }
+
+  return (
+    <div style={{ marginTop: 12, border: '1px solid rgba(234,179,8,0.3)', borderRadius: 12, overflow: 'hidden' }}>
+      <button onClick={toggle} style={{
+        width: '100%', padding: '12px 18px', background: 'rgba(234,179,8,0.06)', border: 'none',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        cursor: 'pointer', fontFamily: 'inherit',
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#ca8a04' }}>💬 고객 문의 {messages !== null ? `(${messages.length})` : ''}</span>
+        <span style={{ fontSize: 11, color: 'var(--fg2)' }}>{open ? '닫기 ▲' : '열기 ▼'}</span>
+      </button>
+      {open && (
+        <div style={{ padding: '14px 18px', borderTop: '1px solid var(--border)' }}>
+          {!messages || messages.length === 0 ? (
+            <p style={{ fontSize: 13, color: 'var(--fg2)' }}>고객 문의가 없습니다.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {messages.map(m => (
+                <div key={m.id} style={{ padding: '10px 14px', background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: 8 }}>
+                  <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.message}</p>
+                  <div style={{ fontSize: 11, color: 'var(--fg2)', marginTop: 6 }}>{new Date(m.created_at).toLocaleString('ko-KR')}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // 고객 이력 — 같은 이메일의 다른 의뢰 목록

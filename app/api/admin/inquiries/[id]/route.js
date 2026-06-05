@@ -106,17 +106,15 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ ok: true, status: 'in_progress' })
   }
 
-  // 완료 처리 → 파일 URL + 발송 메모 기록 + 고객 메일 + 완료로 변경
+  // 결과물 납품 → 고객 검토 요청 (in_progress 유지, 파일/메모만 저장)
   if (action === 'complete') {
     const { deliveryNote, deliveryFileUrl } = body
 
     const { error } = await getSupabaseAdmin()
       .from('inquiries')
       .update({
-        status: 'completed',
         delivery_note: deliveryNote || null,
         delivery_file_url: deliveryFileUrl || null,
-        completed_at: new Date().toISOString(),
       })
       .eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -124,16 +122,26 @@ export async function PATCH(req, { params }) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inquiry.user_email,
-      subject: `[우아라빈] 작업이 완료되었습니다 — ${inquiry.title}`,
+      subject: `[우아라빈] 결과물을 확인해주세요 — ${inquiry.title}`,
       html: `
         <h2>안녕하세요, ${inquiry.user_name}님!</h2>
-        <p>프로젝트 <strong>${inquiry.title}</strong> 작업이 완료되었습니다.</p>
+        <p>프로젝트 <strong>${inquiry.title}</strong>의 결과물이 준비되었습니다. 확인 후 포털에서 완료 버튼을 눌러주세요.</p>
         ${deliveryNote ? `<hr/><p style="white-space:pre-wrap">${deliveryNote}</p>` : ''}
         ${deliveryFileUrl ? `<p><a href="${deliveryFileUrl}" style="color:#0ea5e9">결과물 다운로드 →</a></p>` : ''}
-        <p style="color:#888;font-size:13px">이용해 주셔서 감사합니다.</p>
+        <p><a href="${process.env.NEXTAUTH_URL}/portal" style="color:#0ea5e9">포털에서 확인하기 →</a></p>
       `,
     }).catch(e => console.error('Email error:', e))
 
+    return NextResponse.json({ ok: true, status: 'in_progress' })
+  }
+
+  // 최종 완료 (어드민이 입금 확인 후 처리)
+  if (action === 'final_complete') {
+    const { error } = await getSupabaseAdmin()
+      .from('inquiries')
+      .update({ status: 'completed' })
+      .eq('id', id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ ok: true, status: 'completed' })
   }
 

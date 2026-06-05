@@ -79,20 +79,11 @@ export default function AdminRevenue({ inquiries }) {
     return { label: `${m + 1}월`, amount, month: m, year: y }
   })
 
-  // 선택된 월의 프로젝트 필터링
+  // 선택된 월의 프로젝트 필터링 (해당 월에 접수된 프로젝트)
   const filteredByMonth = selectedMonth
     ? list.filter(inq => {
-        const dep = inq.deposit_amount || 0
-        const fin = inq.final_amount || 0
-        const depOk = inq.deposit_confirmed && (() => {
-          const d = new Date(inq.deposit_confirmed_at)
-          return d.getFullYear() === selectedMonth.year && d.getMonth() === selectedMonth.month
-        })()
-        const finOk = inq.final_confirmed && (() => {
-          const d = new Date(inq.final_confirmed_at)
-          return d.getFullYear() === selectedMonth.year && d.getMonth() === selectedMonth.month
-        })()
-        return depOk || finOk
+        const d = new Date(inq.created_at)
+        return d.getFullYear() === selectedMonth.year && d.getMonth() === selectedMonth.month
       })
     : list.filter(i => i.final_amount)
 
