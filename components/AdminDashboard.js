@@ -65,13 +65,12 @@ export default function AdminDashboard({ initialInquiries }) {
                     <span style={{ fontSize: 13, fontWeight: 600, flex: 1, marginRight: 8, lineHeight: 1.4 }}>{inq.title}</span>
                     <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 12, background: color + '22', color, whiteSpace: 'nowrap' }}>{label}</span>
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--fg2)', display: 'flex', gap: 6 }}>
+                  <div style={{ fontSize: 11, color: 'var(--fg2)', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     <span style={{ background: inq.inquiry_type === 'as' ? '#f59e0b22' : '#3b82f622', color: inq.inquiry_type === 'as' ? '#f59e0b' : '#3b82f6', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
                       {inq.inquiry_type === 'as' ? 'AS' : '신규'}
                     </span>
+                    {inq.inquiry_number && <span style={{ fontFamily: 'monospace', color: 'var(--fg2)' }}>{inq.inquiry_number}</span>}
                     <span>{inq.user_name}</span>
-                    <span>·</span>
-                    <span>{inq.project_type}</span>
                     <span>·</span>
                     <span>{new Date(inq.created_at).toLocaleDateString('ko-KR')}</span>
                   </div>

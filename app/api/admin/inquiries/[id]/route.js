@@ -98,6 +98,7 @@ export async function PATCH(req, { params }) {
         status: 'in_progress',
         final_amount: parseInt(finalAmount),
         deposit_amount: depositAmount ? parseInt(depositAmount) : null,
+        work_started_at: new Date().toISOString(),
       })
       .eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -115,6 +116,7 @@ export async function PATCH(req, { params }) {
         status: 'completed',
         delivery_note: deliveryNote || null,
         delivery_file_url: deliveryFileUrl || null,
+        completed_at: new Date().toISOString(),
       })
       .eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

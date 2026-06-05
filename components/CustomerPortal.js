@@ -75,6 +75,7 @@ export default function CustomerPortal({ inquiries }) {
                 </span>
                 <span>{selected.project_type}</span>
                 <span>·</span>
+                {selected.inquiry_number && <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--fg)' }}>{selected.inquiry_number}</span>}
                 <span>{new Date(selected.created_at).toLocaleDateString('ko-KR')} 접수</span>
               </div>
               <h2 style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-0.3px' }}>{selected.title}</h2>
