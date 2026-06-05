@@ -162,6 +162,40 @@ export default function CustomerPortal({ inquiries }) {
             </div>
           )}
 
+          {/* 금액 안내 + 선입금 버튼 */}
+          {selectedInq.status === 'in_progress' && selectedInq.final_amount && (
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', background: 'rgba(16,185,129,0.04)' }}>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>결제 안내</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                <Info label="최종 금액" value={`${Number(selectedInq.final_amount).toLocaleString()}원`} />
+                {selectedInq.deposit_amount && <Info label="선입금" value={`${Number(selectedInq.deposit_amount).toLocaleString()}원`} />}
+              </div>
+              {!selectedInq.deposit_confirmed && selectedInq.deposit_amount && (
+                <PaymentNotifyButton inquiryId={selectedInq.id} type="deposit" label={`선입금 ${Number(selectedInq.deposit_amount).toLocaleString()}원 입금 완료 알리기`} color="#10b981" />
+              )}
+              {selectedInq.deposit_confirmed && !selectedInq.final_confirmed && (
+                <p style={{ fontSize: 13, color: '#10b981', fontWeight: 600 }}>✓ 선입금 확인되었습니다.</p>
+              )}
+            </div>
+          )}
+
+          {/* pending_payment 상태: 잔금 안내 */}
+          {selectedInq.status === 'pending_payment' && selectedInq.final_amount && (
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', background: 'rgba(249,115,22,0.04)' }}>
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>잔금 안내</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                <Info label="최종 금액" value={`${Number(selectedInq.final_amount).toLocaleString()}원`} />
+                <Info label="잔금" value={`${Number(selectedInq.final_amount - (selectedInq.deposit_amount || 0)).toLocaleString()}원`} />
+              </div>
+              {!selectedInq.final_confirmed && (
+                <PaymentNotifyButton inquiryId={selectedInq.id} type="final" label={`잔금 ${Number(selectedInq.final_amount - (selectedInq.deposit_amount || 0)).toLocaleString()}원 입금 완료 알리기`} color="#f97316" />
+              )}
+              {selectedInq.final_confirmed && (
+                <p style={{ fontSize: 13, color: '#10b981', fontWeight: 600 }}>✓ 잔금 확인되었습니다. 최종 완료 처리 중입니다.</p>
+              )}
+            </div>
+          )}
+
           {/* 중간 전달 자료 */}
           {files.length > 0 && (
             <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)' }}>
@@ -208,7 +242,10 @@ export default function CustomerPortal({ inquiries }) {
 
           {/* 고객 문의 */}
           {['in_progress', 'pending_payment', 'quoted'].includes(selectedInq.status) && (
-            <CustomerMessage inquiryId={selectedInq.id} />
+            <CustomerMessage
+              inquiryId={selectedInq.id}
+              messages={[...(selectedInq.customer_messages || [])].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))}
+            />
           )}
 
         </div>
@@ -246,9 +283,9 @@ function CompleteButton({ inquiryId, onComplete }) {
   )
 }
 
-function CustomerMessage({ inquiryId }) {
+function CustomerMessage({ inquiryId, messages: initialMessages }) {
+  const [messages, setMessages] = useState(initialMessages || [])
   const [message, setMessage] = useState('')
-  const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
 
   async function send() {
@@ -259,14 +296,38 @@ function CustomerMessage({ inquiryId }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ inquiryId, message }),
     })
-    if (res.ok) { setSent(true); setMessage('') }
+    if (res.ok) {
+      const data = await res.json()
+      setMessages(ms => [...ms, data])
+      setMessage('')
+    }
     setLoading(false)
   }
 
   return (
     <div style={{ padding: '16px 24px' }}>
-      <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg2)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>문의하기</h3>
-      {sent && <p style={{ fontSize: 13, color: '#10b981', marginBottom: 10 }}>✓ 문의가 접수되었습니다. 확인 후 이메일로 답변드리겠습니다.</p>}
+      <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg2)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>문의 내역</h3>
+
+      {messages.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+          {messages.map(m => (
+            <div key={m.id}>
+              <div style={{ padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
+                <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.message}</p>
+                <p style={{ fontSize: 11, color: 'var(--fg2)', margin: '4px 0 0' }}>{new Date(m.created_at).toLocaleString('ko-KR')}</p>
+              </div>
+              {m.reply && (
+                <div style={{ marginLeft: 16, marginTop: 4, padding: '8px 12px', background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8 }}>
+                  <p style={{ fontSize: 11, color: '#3b82f6', fontWeight: 600, margin: '0 0 4px' }}>우아라빈 답변</p>
+                  <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.reply}</p>
+                  <p style={{ fontSize: 11, color: 'var(--fg2)', margin: '4px 0 0' }}>{new Date(m.replied_at).toLocaleString('ko-KR')}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <textarea
         value={message}
         onChange={e => setMessage(e.target.value)}
@@ -298,6 +359,34 @@ function TimelineItem({ label, date, color }) {
       <span style={{ fontSize: 13, color: 'var(--fg)' }}>{label}</span>
       <span style={{ fontSize: 12, color: 'var(--fg2)', marginLeft: 'auto' }}>{new Date(date).toLocaleDateString('ko-KR')}</span>
     </div>
+  )
+}
+
+function PaymentNotifyButton({ inquiryId, type, label, color }) {
+  const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function notify() {
+    setLoading(true)
+    const res = await fetch('/api/portal/notify-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inquiryId, type }),
+    })
+    if (res.ok) setSent(true)
+    setLoading(false)
+  }
+
+  if (sent) return <p style={{ fontSize: 13, color, fontWeight: 600 }}>✓ 입금 알림을 보냈습니다. 확인 후 처리해드리겠습니다.</p>
+
+  return (
+    <button onClick={notify} disabled={loading} style={{
+      padding: '10px 20px', background: color + '22', color,
+      border: `1px solid ${color}66`, borderRadius: 8,
+      fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+    }}>
+      {loading ? '전송 중...' : `💸 ${label}`}
+    </button>
   )
 }
 

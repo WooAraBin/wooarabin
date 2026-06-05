@@ -11,7 +11,7 @@ export default async function PortalPage() {
 
   const { data: inquiries } = await getSupabaseAdmin()
     .from('inquiries')
-    .select('*, project_files(*)')
+    .select('*, project_files(*), customer_messages(*)')
     .eq('user_email', session.user.email)
     .order('created_at', { ascending: false })
 

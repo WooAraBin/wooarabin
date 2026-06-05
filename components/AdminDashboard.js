@@ -63,7 +63,17 @@ export default function AdminDashboard({ initialInquiries }) {
                   borderLeft: isActive ? '3px solid var(--accent)' : '3px solid transparent',
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, flex: 1, marginRight: 8, lineHeight: 1.4 }}>{inq.title}</span>
+                    <div style={{ flex: 1, marginRight: 8 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.4 }}>{inq.title}</span>
+                      {(() => {
+                        const unanswered = (inq.customer_messages || []).filter(m => !m.reply).length
+                        return unanswered > 0 ? (
+                          <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 10, background: '#ef444422', color: '#ef4444', border: '1px solid #ef444444' }}>
+                            💬 문의 {unanswered}건
+                          </span>
+                        ) : null
+                      })()}
+                    </div>
                     <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 12, background: color + '22', color, whiteSpace: 'nowrap' }}>{label}</span>
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--fg2)', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -575,9 +585,11 @@ const labelStyle = {
 function CustomerMessages({ inquiryId }) {
   const [messages, setMessages] = useState(null)
   const [open, setOpen] = useState(false)
+  const [replyingId, setReplyingId] = useState(null)
+  const [replyText, setReplyText] = useState('')
+  const [sending, setSending] = useState(false)
 
   async function load() {
-    if (messages !== null) return
     const res = await fetch(`/api/admin/messages?inquiryId=${inquiryId}`)
     const data = await res.json()
     setMessages(Array.isArray(data) ? data : [])
@@ -588,26 +600,104 @@ function CustomerMessages({ inquiryId }) {
     setOpen(o => !o)
   }
 
+  async function sendReply(messageId) {
+    if (!replyText.trim()) return
+    setSending(true)
+    const res = await fetch('/api/admin/messages/reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messageId, reply: replyText }),
+    })
+    if (res.ok) {
+      const now = new Date().toISOString()
+      setMessages(ms => ms.map(m => m.id === messageId ? { ...m, reply: replyText, replied_at: now } : m))
+      setReplyingId(null)
+      setReplyText('')
+    }
+    setSending(false)
+  }
+
+  const unanswered = (messages || []).filter(m => !m.reply).length
+
   return (
-    <div style={{ marginTop: 12, border: '1px solid rgba(234,179,8,0.3)', borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ marginTop: 12, border: `1px solid ${unanswered > 0 ? '#ef444444' : 'rgba(234,179,8,0.3)'}`, borderRadius: 12, overflow: 'hidden' }}>
       <button onClick={toggle} style={{
-        width: '100%', padding: '12px 18px', background: 'rgba(234,179,8,0.06)', border: 'none',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        width: '100%', padding: '12px 18px',
+        background: unanswered > 0 ? 'rgba(239,68,68,0.06)' : 'rgba(234,179,8,0.06)',
+        border: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         cursor: 'pointer', fontFamily: 'inherit',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#ca8a04' }}>💬 고객 문의 {messages !== null ? `(${messages.length})` : ''}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: unanswered > 0 ? '#ef4444' : '#ca8a04' }}>
+            💬 고객 문의 {messages !== null ? `(${messages.length})` : ''}
+          </span>
+          {unanswered > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#ef444422', color: '#ef4444' }}>
+              답변 필요 {unanswered}건
+            </span>
+          )}
+        </div>
         <span style={{ fontSize: 11, color: 'var(--fg2)' }}>{open ? '닫기 ▲' : '열기 ▼'}</span>
       </button>
+
       {open && (
         <div style={{ padding: '14px 18px', borderTop: '1px solid var(--border)' }}>
           {!messages || messages.length === 0 ? (
             <p style={{ fontSize: 13, color: 'var(--fg2)' }}>고객 문의가 없습니다.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {messages.map(m => (
-                <div key={m.id} style={{ padding: '10px 14px', background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: 8 }}>
-                  <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.message}</p>
-                  <div style={{ fontSize: 11, color: 'var(--fg2)', marginTop: 6 }}>{new Date(m.created_at).toLocaleString('ko-KR')}</div>
+                <div key={m.id}>
+                  {/* 고객 문의 */}
+                  <div
+                    onClick={() => { setReplyingId(replyingId === m.id ? null : m.id); setReplyText('') }}
+                    style={{ padding: '10px 14px', background: m.reply ? 'var(--card)' : 'rgba(239,68,68,0.06)', border: `1px solid ${m.reply ? 'var(--border)' : '#ef444444'}`, borderRadius: 8, cursor: 'pointer' }}
+                  >
+                    <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.message}</p>
+                    <div style={{ fontSize: 11, color: 'var(--fg2)', marginTop: 6, display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{new Date(m.created_at).toLocaleString('ko-KR')}</span>
+                      <span style={{ color: m.reply ? '#10b981' : '#ef4444', fontWeight: 600 }}>
+                        {m.reply ? '✓ 답변완료' : '클릭하여 답변 작성'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 기존 답변 */}
+                  {m.reply && (
+                    <div style={{ marginLeft: 16, marginTop: 4, padding: '8px 12px', background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8 }}>
+                      <p style={{ fontSize: 12, color: '#10b981', fontWeight: 600, margin: '0 0 4px' }}>답변</p>
+                      <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.reply}</p>
+                      <p style={{ fontSize: 11, color: 'var(--fg2)', margin: '4px 0 0' }}>{new Date(m.replied_at).toLocaleString('ko-KR')}</p>
+                    </div>
+                  )}
+
+                  {/* 답변 입력창 */}
+                  {replyingId === m.id && (
+                    <div style={{ marginLeft: 16, marginTop: 4 }}>
+                      <textarea
+                        autoFocus
+                        value={replyText}
+                        onChange={e => setReplyText(e.target.value)}
+                        placeholder="답변을 작성하세요. 고객에게 이메일로 전송됩니다."
+                        rows={3}
+                        style={{ ...textareaStyle, marginBottom: 6 }}
+                      />
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button onClick={() => sendReply(m.id)} disabled={sending || !replyText.trim()} style={{
+                          padding: '7px 14px', background: '#10b981', color: '#fff',
+                          border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 700,
+                          cursor: replyText.trim() ? 'pointer' : 'not-allowed', fontFamily: 'inherit',
+                        }}>
+                          {sending ? '전송 중...' : '답변 전송'}
+                        </button>
+                        <button onClick={() => setReplyingId(null)} style={{
+                          padding: '7px 12px', background: 'none', color: 'var(--fg2)',
+                          border: '1px solid var(--border)', borderRadius: 6, fontSize: 13,
+                          cursor: 'pointer', fontFamily: 'inherit',
+                        }}>취소</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -19,7 +19,7 @@ export default async function AdminPage({ searchParams }) {
   const tab = params.tab || 'inquiries'
 
   const [{ data: inquiries }, { data: customers }] = await Promise.all([
-    getSupabaseAdmin().from('inquiries').select('*').order('created_at', { ascending: false }),
+    getSupabaseAdmin().from('inquiries').select('*, customer_messages(id, reply)').order('created_at', { ascending: false }),
     getSupabaseAdmin().from('users').select('*, inquiries(phone_number, created_at)').order('created_at', { ascending: false }),
   ])
 
