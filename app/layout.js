@@ -1,5 +1,6 @@
 import './globals.css'
 import Header from '@/components/Header'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata = {
   title: '우아라빈 — Web & App Development',
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <Header />
         {children}
+        <Analytics />
       </body>
     </html>
   )

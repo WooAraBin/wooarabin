@@ -11,7 +11,7 @@ export async function POST(req) {
   }
 
   const body = await req.json()
-  const { projectType, title, description, budget, deadline, referenceUrl, inquiryType, attachmentUrl } = body
+  const { projectType, title, description, budget, deadline, referenceUrl, inquiryType, attachmentUrl, phoneNumber } = body
 
   if (!title || !description) {
     return NextResponse.json({ error: '필수 항목을 입력해주세요.' }, { status: 400 })
@@ -30,6 +30,7 @@ export async function POST(req) {
       deadline: deadline || null,
       reference_url: referenceUrl || null,
       attachment_url: attachmentUrl || null,
+      phone_number: phoneNumber || null,
       status: 'received',
     })
     .select()

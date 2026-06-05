@@ -137,8 +137,9 @@ export default function AdminDashboard({ initialInquiries }) {
 
               {/* 의뢰 기본 정보 */}
               <Section title="의뢰인">
-                <Row label="이름" value={selected.user_name} />
+                <Row label="이름" value={selected.user_name || '-'} />
                 <Row label="이메일" value={<a href={`mailto:${selected.user_email}`} style={{ color: 'var(--accent)' }}>{selected.user_email}</a>} />
+                <Row label="연락처" value={selected.phone_number ? <a href={`tel:${selected.phone_number}`} style={{ color: 'var(--accent)' }}>{selected.phone_number}</a> : '-'} />
               </Section>
 
               <Section title="프로젝트 정보">

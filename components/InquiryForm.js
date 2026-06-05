@@ -28,6 +28,7 @@ export default function InquiryForm({ user, type = 'new' }) {
     budget: '',
     deadline: '',
     referenceUrl: '',
+    phoneNumber: '',
   })
   const [file, setFile] = useState(null)
   const [fileError, setFileError] = useState('')
@@ -50,6 +51,10 @@ export default function InquiryForm({ user, type = 'new' }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!form.phoneNumber) {
+      setError('연락처를 입력해주세요.')
+      return
+    }
     if (!form.title || !form.description) {
       setError('제목과 내용은 필수 항목입니다.')
       return
@@ -95,10 +100,22 @@ export default function InquiryForm({ user, type = 'new' }) {
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* 의뢰인 정보 */}
-      <div style={{ padding: '14px 16px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, color: 'var(--fg2)' }}>
-        <span style={{ marginRight: 16 }}>의뢰인</span>
+      <div style={{ padding: '14px 16px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, color: 'var(--fg2)', display: 'flex', gap: 16 }}>
+        <span>의뢰인</span>
         <strong style={{ color: 'var(--fg)' }}>{user.name}</strong>
-        <span style={{ marginLeft: 12 }}>{user.email}</span>
+        <span>{user.email}</span>
+      </div>
+
+      {/* 전화번호 */}
+      <div>
+        <label style={labelStyle}>연락처 <span style={{ color: '#f87171' }}>*</span></label>
+        <input
+          type="tel"
+          placeholder="010-0000-0000"
+          value={form.phoneNumber}
+          onChange={set('phoneNumber')}
+          style={inputStyle}
+        />
       </div>
 
       {/* 신규: 프로젝트 유형 선택 */}

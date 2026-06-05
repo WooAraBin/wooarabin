@@ -49,11 +49,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, account }) {
       if (account) {
         token.provider = account.provider
-        // 로그인 시 Supabase에서 role 조회
+        // 로그인 시 users 테이블에 upsert (신규 가입 자동 저장)
         const { data } = await getSupabaseAdmin()
           .from('users')
+          .upsert(
+            { email: token.email, name: token.name, provider: account.provider, last_login: new Date().toISOString() },
+            { onConflict: 'email', ignoreDuplicates: false }
+          )
           .select('role')
-          .eq('email', token.email)
           .single()
         token.role = data?.role || 'user'
       }
