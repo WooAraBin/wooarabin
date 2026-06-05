@@ -5,7 +5,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
 
   // 보호된 경로
-  const protectedRoutes = ['/portal', '/admin']
+  const protectedRoutes = ['/portal', '/admin', '/contact']
   const isProtected = protectedRoutes.some(r => pathname.startsWith(r))
 
   if (isProtected && !isLoggedIn) {
@@ -14,5 +14,5 @@ export default auth((req) => {
 })
 
 export const config = {
-  matcher: ['/portal/:path*', '/admin/:path*'],
+  matcher: ['/portal/:path*', '/admin/:path*', '/contact/:path*', '/contact'],
 }
