@@ -1,65 +1,133 @@
-import Image from "next/image";
+import Link from 'next/link'
+
+const services = [
+  { icon: '🌐', title: '웹 개발', desc: '반응형 웹사이트, 랜딩 페이지, 관리자 대시보드' },
+  { icon: '📱', title: '앱 개발', desc: 'iOS · Android 크로스플랫폼 앱 (React Native)' },
+  { icon: '🤖', title: 'AI 서비스', desc: 'RAG 챗봇, 영상 분석, LLM 기반 자동화' },
+  { icon: '🔗', title: '시스템 연동', desc: '결제, 알림, 외부 API 통합' },
+]
+
+const works = [
+  { title: '베럴독 AI 플랫폼', desc: '반려견 행동교정 RAG 챗봇 + AI 영상분석 + GPS 산책 추적', tag: 'Web · AI', year: '2026' },
+]
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
+    <div style={{ minHeight: '100vh' }}>
+
+      {/* Nav */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, borderBottom: '1px solid var(--border)', background: 'rgba(10,10,10,0.92)', backdropFilter: 'blur(12px)' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+          <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px' }}>우아라빈</span>
+          <div style={{ display: 'flex', gap: 32, fontSize: 13, color: 'var(--fg2)' }}>
+            <Link href="#work">작업물</Link>
+            <Link href="#services">서비스</Link>
+            <Link href="/contact" style={{ color: 'var(--accent)', fontWeight: 700 }}>의뢰하기</Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ paddingTop: 160, paddingBottom: 120 }}>
+        <div className="container">
+          <p style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700, letterSpacing: '.1em', marginBottom: 20 }}>WEB · APP · AI DEVELOPMENT</p>
+          <h1 style={{ fontSize: 'clamp(48px, 8vw, 96px)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-2px', marginBottom: 32 }}>
+            아이디어를<br />현실로 만듭니다
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p style={{ fontSize: 18, color: 'var(--fg2)', maxWidth: 480, lineHeight: 1.7, marginBottom: 48 }}>
+            웹·앱 개발부터 AI 서비스 구축까지.<br />
+            기술로 비즈니스 문제를 해결합니다.
           </p>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: '#000', padding: '14px 28px', borderRadius: 8, fontWeight: 800, fontSize: 15 }}>
+              프로젝트 의뢰하기 →
+            </Link>
+            <Link href="#work" style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid var(--border)', padding: '14px 28px', borderRadius: 8, fontSize: 15 }}>
+              작업물 보기
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Stats */}
+      <section style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '48px 0' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 32 }}>
+          {[
+            { n: 'AI 협업', label: 'Claude와 함께 개발' },
+            { n: '빠른 납기', label: '일정 준수' },
+            { n: '직접 소통', label: '중간 과정 없음' },
+            { n: '합리적', label: '투명한 가격' },
+          ].map((s, i) => (
+            <div key={i}>
+              <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--accent)' }}>{s.n}</div>
+              <div style={{ fontSize: 13, color: 'var(--fg2)', marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Services */}
+      <section id="services" style={{ padding: '100px 0' }}>
+        <div className="container">
+          <p style={{ fontSize: 12, color: 'var(--fg2)', letterSpacing: '.1em', fontWeight: 700, marginBottom: 12 }}>SERVICES</p>
+          <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px', marginBottom: 48 }}>무엇을 만들어드리나요</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 2 }}>
+            {services.map((s, i) => (
+              <div key={i} style={{ padding: 32, border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 32, marginBottom: 16 }}>{s.icon}</div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>{s.title}</h3>
+                <p style={{ fontSize: 14, color: 'var(--fg2)', lineHeight: 1.7 }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Work */}
+      <section id="work" style={{ padding: '100px 0', borderTop: '1px solid var(--border)' }}>
+        <div className="container">
+          <p style={{ fontSize: 12, color: 'var(--fg2)', letterSpacing: '.1em', fontWeight: 700, marginBottom: 12 }}>WORK</p>
+          <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px', marginBottom: 48 }}>최근 작업물</h2>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {works.map((w, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '28px 0', borderBottom: '1px solid var(--border)', gap: 24, flexWrap: 'wrap' }}>
+                <div>
+                  <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>{w.title}</h3>
+                  <p style={{ fontSize: 14, color: 'var(--fg2)' }}>{w.desc}</p>
+                </div>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, color: 'var(--fg2)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: 99 }}>{w.tag}</span>
+                  <span style={{ fontSize: 13, color: 'var(--fg2)' }}>{w.year}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ padding: '120px 0', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+        <div className="container">
+          <h2 style={{ fontSize: 'clamp(36px, 6vw, 72px)', fontWeight: 900, letterSpacing: '-2px', marginBottom: 24 }}>
+            함께 만들어봐요
+          </h2>
+          <p style={{ fontSize: 16, color: 'var(--fg2)', marginBottom: 40 }}>
+            아이디어가 있다면 지금 바로 문의해주세요.<br />빠르게 검토 후 연락드립니다.
+          </p>
+          <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent)', color: '#000', padding: '18px 40px', borderRadius: 8, fontWeight: 900, fontSize: 16 }}>
+            프로젝트 의뢰하기 →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+          <span style={{ fontWeight: 900, fontSize: 16 }}>우아라빈</span>
+          <span style={{ fontSize: 13, color: 'var(--fg2)' }}>© 2026 WooAraBin. All rights reserved.</span>
+        </div>
+      </footer>
+
     </div>
-  );
+  )
 }
