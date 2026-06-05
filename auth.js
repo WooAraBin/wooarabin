@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
 import Kakao from 'next-auth/providers/kakao'
+import { getSupabaseAdmin } from '@/lib/supabase'
 
 const NaverProvider = {
   id: 'naver',
@@ -41,12 +42,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token) {
         session.user.id = token.sub
         session.user.provider = token.provider
+        session.user.role = token.role || 'user'
       }
       return session
     },
     async jwt({ token, account }) {
       if (account) {
         token.provider = account.provider
+        // 로그인 시 Supabase에서 role 조회
+        const { data } = await getSupabaseAdmin()
+          .from('users')
+          .select('role')
+          .eq('email', token.email)
+          .single()
+        token.role = data?.role || 'user'
       }
       return token
     },

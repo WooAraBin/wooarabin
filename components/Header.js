@@ -21,6 +21,9 @@ export default async function Header() {
           {session ? (
             // 로그인 상태
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {session.user?.role === 'admin' && (
+                <Link href="/admin" style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700 }}>관리자</Link>
+              )}
               <Link href="/portal" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {session.user?.image && (
                   <img src={session.user.image} alt="" width={28} height={28}
