@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const STATUS_LABELS = {
   received:        { label: '접수',         color: '#6b7280' },
@@ -406,7 +406,7 @@ function InterimFilesPanel({ inquiry }) {
   const [file, setFile] = useState(null)
   const [note, setNote] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const fileRef = useRef()
 
   async function load() {
@@ -416,10 +416,9 @@ function InterimFilesPanel({ inquiry }) {
     setFiles(Array.isArray(data) ? data : [])
   }
 
-  async function toggle() {
-    if (!open) await load()
-    setOpen(o => !o)
-  }
+  useEffect(() => { load() }, [])
+
+  async function toggle() { setOpen(o => !o) }
 
   async function upload() {
     if (!file) return
