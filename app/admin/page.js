@@ -20,7 +20,7 @@ export default async function AdminPage({ searchParams }) {
 
   const [{ data: inquiries }, { data: customers }] = await Promise.all([
     getSupabaseAdmin().from('inquiries').select('*, customer_messages(id, reply)').order('created_at', { ascending: false }),
-    getSupabaseAdmin().from('users').select('*, inquiries(phone_number, created_at)').order('created_at', { ascending: false }),
+    getSupabaseAdmin().from('users').select('*').order('created_at', { ascending: false }),
   ])
 
   return (
@@ -43,7 +43,7 @@ export default async function AdminPage({ searchParams }) {
 
       {tab === 'inquiries' && <AdminDashboard initialInquiries={inquiries ?? []} />}
       {tab === 'revenue'   && <AdminRevenue inquiries={inquiries ?? []} />}
-      {tab === 'customers' && <AdminCustomers customers={customers ?? []} />}
+      {tab === 'customers' && <AdminCustomers customers={customers ?? []} inquiries={inquiries ?? []} />}
     </div>
   )
 }

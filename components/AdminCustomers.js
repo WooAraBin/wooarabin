@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-export default function AdminCustomers({ customers }) {
+export default function AdminCustomers({ customers, inquiries = [] }) {
   const [list, setList] = useState(customers)
   const [editing, setEditing] = useState(null) // 현재 remark 수정 중인 id
   const [remark, setRemark] = useState('')
@@ -52,7 +52,7 @@ export default function AdminCustomers({ customers }) {
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)' }}>{u.name || '-'}</td>
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)' }}>
                     {(() => {
-                      const phone = u.inquiries?.find(i => i.phone_number)?.phone_number
+                      const phone = inquiries.find(i => i.user_email === u.email && i.phone_number)?.phone_number
                       return phone ? <a href={`tel:${phone}`} style={{ color: 'var(--accent)' }}>{phone}</a> : '-'
                     })()}
                   </td>
