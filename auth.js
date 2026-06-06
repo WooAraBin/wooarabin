@@ -50,14 +50,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (account) {
         token.provider = account.provider
         // 로그인 시 users 테이블에 upsert (신규 가입 자동 저장)
-        const { data } = await getSupabaseAdmin()
+        const { data, error } = await getSupabaseAdmin()
           .from('users')
           .upsert(
             { email: token.email, name: token.name, provider: account.provider, last_login: new Date().toISOString() },
-            { onConflict: 'email', ignoreDuplicates: false }
+            { onConflict: 'email' }
           )
           .select('role')
           .single()
+        if (error) console.error('User upsert error:', error.message, error.code)
         token.role = data?.role || 'user'
       }
       return token
