@@ -244,6 +244,9 @@ function ActionPanel({ inquiry, onUpdate }) {
     return (
       <>
         <InterimFilesPanel inquiry={inquiry} />
+        <div style={{ margin: '16px 0', borderTop: '1px dashed var(--border)', position: 'relative' }}>
+          <span style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: 'var(--bg)', padding: '0 10px', fontSize: 11, color: 'var(--fg2)' }}>최종 납품</span>
+        </div>
         <DeliveryPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
       </>
     )
@@ -442,7 +445,7 @@ function InterimFilesPanel({ inquiry }) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         cursor: 'pointer', fontFamily: 'inherit',
       }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#10b981' }}>📁 중간 자료 전달 {files !== null ? `(${files.length}건)` : ''}</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#10b981' }}>📁 중간 자료 전달 (진행 중 공유용) {files !== null ? `${files.length}건` : ''}</span>
         <span style={{ fontSize: 11, color: 'var(--fg2)' }}>{open ? '닫기 ▲' : '열기 ▼'}</span>
       </button>
       {open && (
@@ -513,7 +516,7 @@ function DeliveryPanel({ inquiry, patch, onUpdate }) {
   }
 
   return (
-    <ActionBox title="결과물 납품" description="완성 파일을 업로드하고 고객에게 발송합니다. '완료'로 전환됩니다.">
+    <ActionBox title="📦 최종 자료 전달" description="최종 완성 파일을 업로드하고 고객에게 발송합니다. 고객이 확인 후 완료 버튼을 누르면 '완료·입금대기'로 전환됩니다.">
       <div style={{ marginBottom: 12 }}>
         <label style={labelStyle}>결과물 파일 (선택)</label>
         <div
