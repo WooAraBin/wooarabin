@@ -21,6 +21,18 @@ export default function AdminDashboard({ initialInquiries }) {
     setSelected(updated)
   }
 
+  function markMessageReplied(inquiryId, messageId, reply) {
+    setInquiries(list => list.map(inq => {
+      if (inq.id !== inquiryId) return inq
+      return {
+        ...inq,
+        customer_messages: (inq.customer_messages || []).map(m =>
+          m.id === messageId ? { ...m, reply } : m
+        ),
+      }
+    }))
+  }
+
   const counts = STATUS_ORDER.reduce((acc, key) => {
     acc[key] = inquiries.filter(i => i.status === key).length
     return acc
@@ -191,7 +203,10 @@ export default function AdminDashboard({ initialInquiries }) {
               <ActionPanel inquiry={selected} onUpdate={updateInquiry} />
 
               {/* 고객 문의 */}
-              <CustomerMessages inquiryId={selected.id} />
+              <CustomerMessages
+                inquiryId={selected.id}
+                onReply={(messageId, reply) => markMessageReplied(selected.id, messageId, reply)}
+              />
 
               {/* 내부 메모 */}
               <InquiryNotes inquiryId={selected.id} />
@@ -583,7 +598,7 @@ const labelStyle = {
 }
 
 // 고객 문의 메시지
-function CustomerMessages({ inquiryId }) {
+function CustomerMessages({ inquiryId, onReply }) {
   const [messages, setMessages] = useState(null)
   const [open, setOpen] = useState(false)
   const [replyingId, setReplyingId] = useState(null)
@@ -612,6 +627,7 @@ function CustomerMessages({ inquiryId }) {
     if (res.ok) {
       const now = new Date().toISOString()
       setMessages(ms => ms.map(m => m.id === messageId ? { ...m, reply: replyText, replied_at: now } : m))
+      onReply?.(messageId, replyText)
       setReplyingId(null)
       setReplyText('')
     }
