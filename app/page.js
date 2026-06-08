@@ -8,10 +8,10 @@ const services = [
 ]
 
 const works = [
-  { title: 'LENZ', desc: '글로벌 시장 실시간 분석 에이전트 — AI 기반 시장 데이터 분석 PWA', tag: 'Web · AI', year: '2026' },
-  { title: 'MeetLog', desc: 'AI 회의록 자동 정리 — 녹음·음성 파일을 Gemini가 요약하고 결정사항 추출', tag: 'Web · AI', year: '2026' },
-  { title: '미식록', desc: '우리집 맛집 아카이브 — 지도에 맛집을 기록하고 평점·리뷰로 정리', tag: 'Web · App', year: '2026' },
-  { title: 'Quick Note', desc: 'Notion 연동 빠른 메모 앱 — 한 번에 캡처해 노션에 자동 저장', tag: 'Web · App', year: '2026' },
+  { title: 'LENZ', desc: '글로벌 시장 실시간 분석 에이전트 — AI 기반 시장 데이터 분석 PWA', tag: 'Web · AI', year: '2026', img: '/works/lenz.png' },
+  { title: 'MeetLog', desc: 'AI 회의록 자동 정리 — 녹음·음성 파일을 Gemini가 요약하고 결정사항 추출', tag: 'Web · AI', year: '2026', img: '/works/meetlog.png' },
+  { title: '미식록', desc: '우리집 맛집 아카이브 — 지도에 맛집을 기록하고 평점·리뷰로 정리', tag: 'Web · App', year: '2026', img: '/works/misikrok.png' },
+  { title: 'Quick Note', desc: 'Notion 연동 빠른 메모 앱 — 한 번에 캡처해 노션에 자동 저장', tag: 'Web · App', year: '2026', img: '/works/quicknote.png' },
 ]
 
 export default function Home() {
@@ -79,16 +79,19 @@ export default function Home() {
         <div className="container">
           <p style={{ fontSize: 12, color: 'var(--fg2)', letterSpacing: '.1em', fontWeight: 700, marginBottom: 12 }}>WORK</p>
           <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px', marginBottom: 48 }}>최근 작업물</h2>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
             {works.map((w, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '28px 0', borderBottom: '1px solid var(--border)', gap: 24, flexWrap: 'wrap' }}>
-                <div>
-                  <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>{w.title}</h3>
-                  <p style={{ fontSize: 14, color: 'var(--fg2)' }}>{w.desc}</p>
+              <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', background: '#111' }}>
+                <div style={{ aspectRatio: '16 / 10', overflow: 'hidden', borderBottom: '1px solid var(--border)', background: '#fff' }}>
+                  <img src={w.img} alt={w.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }} />
                 </div>
-                <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 12, color: 'var(--fg2)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: 99 }}>{w.tag}</span>
-                  <span style={{ fontSize: 13, color: 'var(--fg2)' }}>{w.year}</span>
+                <div style={{ padding: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <h3 style={{ fontSize: 19, fontWeight: 800 }}>{w.title}</h3>
+                    <span style={{ fontSize: 12, color: 'var(--fg2)' }}>{w.year}</span>
+                  </div>
+                  <p style={{ fontSize: 13.5, color: 'var(--fg2)', lineHeight: 1.65, marginBottom: 14 }}>{w.desc}</p>
+                  <span style={{ fontSize: 11, color: 'var(--fg2)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: 99 }}>{w.tag}</span>
                 </div>
               </div>
             ))}
