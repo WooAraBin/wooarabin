@@ -7,6 +7,14 @@ export default function AdminCustomers({ customers, inquiries = [] }) {
   const [editing, setEditing] = useState(null) // 현재 remark 수정 중인 id
   const [remark, setRemark] = useState('')
   const [saving, setSaving] = useState(false)
+  const [shownPhones, setShownPhones] = useState({}) // 전화번호 보기 토글 (id별)
+
+  const maskPhone = (p) => {
+    const digits = (p || '').replace(/\D/g, '')
+    if (digits.length < 4) return '•'.repeat(p.length)
+    // 앞 3자리만 노출, 나머지는 마스킹
+    return p.replace(/\d/g, (d, i) => (i < 3 ? d : '•'))
+  }
 
   const nonAdmins = list.filter(u => u.role !== 'admin')
 
@@ -53,7 +61,20 @@ export default function AdminCustomers({ customers, inquiries = [] }) {
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)' }}>
                     {(() => {
                       const phone = inquiries.find(i => i.user_email === u.email && i.phone_number)?.phone_number
-                      return phone ? <a href={`tel:${phone}`} style={{ color: 'var(--accent)' }}>{phone}</a> : '-'
+                      if (!phone) return '-'
+                      const shown = shownPhones[u.id]
+                      return (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                          {shown
+                            ? <a href={`tel:${phone}`} style={{ color: 'var(--accent)' }}>{phone}</a>
+                            : <span style={{ letterSpacing: 1, fontVariantNumeric: 'tabular-nums' }}>{maskPhone(phone)}</span>}
+                          <button
+                            onClick={() => setShownPhones(s => ({ ...s, [u.id]: !s[u.id] }))}
+                            title={shown ? '숨기기' : '전화번호 보기'}
+                            style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '2px 8px', fontSize: 11, color: 'var(--fg2)', cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}
+                          >{shown ? '숨기기' : '보기'}</button>
+                        </span>
+                      )
                     })()}
                   </td>
                   <td style={{ padding: '12px 16px', color: 'var(--fg2)', whiteSpace: 'nowrap' }}>
