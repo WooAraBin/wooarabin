@@ -14,9 +14,22 @@ export async function PATCH(req, { params }) {
   }
 
   const { id } = await params
-  const { remark } = await req.json()
+  const body = await req.json()
 
-  const { error } = await getSupabaseAdmin().from('users').update({ remark }).eq('id', id)
+  const update = {}
+  if (typeof body.remark === 'string') update.remark = body.remark
+  if (body.role !== undefined) {
+    const allowed = ['user', 'admin', 'trainer']
+    if (!allowed.includes(body.role)) {
+      return NextResponse.json({ error: 'invalid role' }, { status: 400 })
+    }
+    update.role = body.role
+  }
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'nothing to update' }, { status: 400 })
+  }
+
+  const { error } = await getSupabaseAdmin().from('users').update(update).eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ ok: true })
