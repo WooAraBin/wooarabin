@@ -10,7 +10,7 @@ const services = [
 const works = [
   { title: 'LENZ', desc: '글로벌 시장 실시간 분석 에이전트 — AI 기반 시장 데이터 분석 PWA', tag: 'Web · AI', year: '2026' },
   { title: 'MeetLog', desc: 'AI 회의록 자동 정리 — 녹음·음성 파일을 Gemini가 요약하고 결정사항 추출', tag: 'Web · AI', year: '2026' },
-  { title: '미식록', desc: '나만의 맛집·미식 경험 기록 앱', tag: 'Web · App', year: '2026' },
+  { title: '미식록', desc: '우리집 맛집 아카이브 — 지도에 맛집을 기록하고 평점·리뷰로 정리', tag: 'Web · App', year: '2026' },
   { title: 'Quick Note', desc: 'Notion 연동 빠른 메모 앱 — 한 번에 캡처해 노션에 자동 저장', tag: 'Web · App', year: '2026' },
 ]
 
