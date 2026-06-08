@@ -1,17 +1,11 @@
 import Link from 'next/link'
+import { works } from '@/lib/works'
 
 const services = [
   { icon: '🌐', title: '웹 개발', desc: '반응형 웹사이트, 랜딩 페이지, 관리자 대시보드' },
   { icon: '📱', title: '앱 개발', desc: 'iOS · Android 크로스플랫폼 앱 (React Native)' },
   { icon: '🤖', title: 'AI 서비스', desc: 'RAG 챗봇, 영상 분석, LLM 기반 자동화' },
   { icon: '🔗', title: '시스템 연동', desc: '결제, 알림, 외부 API 통합' },
-]
-
-const works = [
-  { title: 'LENZ', desc: '글로벌 시장 실시간 분석 에이전트 — AI 기반 시장 데이터 분석 PWA', tag: 'Web · AI', year: '2026', img: '/works/lenz.png' },
-  { title: 'MeetLog', desc: 'AI 회의록 자동 정리 — 녹음·음성 파일을 Gemini가 요약하고 결정사항 추출', tag: 'Web · AI', year: '2026', img: '/works/meetlog.png' },
-  { title: '미식록', desc: '우리집 맛집 아카이브 — 지도에 맛집을 기록하고 평점·리뷰로 정리', tag: 'Web · App', year: '2026', img: '/works/misikrok.png' },
-  { title: 'Quick Note', desc: 'Notion 연동 빠른 메모 앱 — 한 번에 캡처해 노션에 자동 저장', tag: 'Web · App', year: '2026', img: '/works/quicknote.png' },
 ]
 
 export default function Home() {
@@ -81,19 +75,22 @@ export default function Home() {
           <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px', marginBottom: 48 }}>최근 작업물</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
             {works.map((w, i) => (
-              <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', background: '#111' }}>
+              <Link key={i} href={`/work/${w.slug}`} style={{ border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', background: '#111', display: 'block', color: 'inherit' }}>
                 <div style={{ aspectRatio: '16 / 10', overflow: 'hidden', borderBottom: '1px solid var(--border)', background: '#fff' }}>
-                  <img src={w.img} alt={w.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }} />
+                  <img src={w.cover} alt={w.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }} />
                 </div>
                 <div style={{ padding: 20 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <h3 style={{ fontSize: 19, fontWeight: 800 }}>{w.title}</h3>
                     <span style={{ fontSize: 12, color: 'var(--fg2)' }}>{w.year}</span>
                   </div>
-                  <p style={{ fontSize: 13.5, color: 'var(--fg2)', lineHeight: 1.65, marginBottom: 14 }}>{w.desc}</p>
-                  <span style={{ fontSize: 11, color: 'var(--fg2)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: 99 }}>{w.tag}</span>
+                  <p style={{ fontSize: 13.5, color: 'var(--fg2)', lineHeight: 1.65, marginBottom: 14 }}>{w.tagline}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 11, color: 'var(--fg2)', border: '1px solid var(--border)', padding: '4px 10px', borderRadius: 99 }}>{w.tags.join(' · ')}</span>
+                    <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700 }}>자세히 →</span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
