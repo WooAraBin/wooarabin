@@ -62,18 +62,17 @@ export default async function WorkDetail({ params }) {
 
         {/* Screenshots */}
         <p style={{ fontSize: 12, color: 'var(--fg2)', letterSpacing: '.1em', fontWeight: 700, marginBottom: 20 }}>화면</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-          {w.gallery.map((g, i) => (
-            <figure key={i} style={{ margin: 0 }}>
-              <div style={{ border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', background: '#fff' }}>
-                <img src={g.src} alt={g.caption || w.title} style={{ width: '100%', display: 'block' }} />
+        {w.screenshots && w.screenshots.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+            {w.screenshots.map((src, i) => (
+              <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', background: '#fff' }}>
+                <img src={src} alt={`${w.title} 화면 ${i + 1}`} style={{ width: '100%', display: 'block' }} />
               </div>
-              {g.caption && (
-                <figcaption style={{ fontSize: 13, color: 'var(--fg2)', marginTop: 10, textAlign: 'center' }}>{g.caption}</figcaption>
-              )}
-            </figure>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ fontSize: 14, color: 'var(--fg2)' }}>스크린샷 준비 중입니다.</p>
+        )}
 
         {/* CTA */}
         <div style={{ marginTop: 72, paddingTop: 40, borderTop: '1px solid var(--border)', textAlign: 'center' }}>
