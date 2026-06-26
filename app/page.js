@@ -117,9 +117,15 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <span style={{ fontWeight: 900, fontSize: 16, display: 'inline-flex', alignItems: 'flex-end', gap: 3 }}>
+          <span style={{
+            fontWeight: 900, fontSize: 22, letterSpacing: '-0.5px',
+            display: 'inline-flex', alignItems: 'center', gap: 7,
+            border: '1.5px solid rgba(232,255,0,0.45)', borderRadius: 12,
+            padding: '6px 14px', background: 'rgba(232,255,0,0.06)',
+            boxShadow: '0 0 16px rgba(232,255,0,0.12)',
+          }}>
             루카이든
-            <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', marginBottom: 3, boxShadow: '0 0 8px var(--accent)' }} />
+            <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 12px var(--accent)' }} />
           </span>
           <span style={{ fontSize: 13, color: 'var(--fg2)' }}>© 2026 Lukaiden. All rights reserved.</span>
         </div>
