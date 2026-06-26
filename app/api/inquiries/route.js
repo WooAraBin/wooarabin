@@ -57,7 +57,7 @@ export async function POST(req) {
   await resend.emails.send({
     from: 'onboarding@resend.dev',
     to: process.env.ADMIN_EMAIL,
-    subject: `[우아라빈] 새 프로젝트 의뢰 ${inquiryNumber}: ${title}`,
+    subject: `[루카이든] 새 프로젝트 의뢰 ${inquiryNumber}: ${title}`,
     html: `
       <h2>새 프로젝트 의뢰가 접수되었습니다</h2>
       <p><strong>접수번호: ${inquiryNumber}</strong></p>
@@ -76,7 +76,7 @@ export async function POST(req) {
   await resend.emails.send({
     from: 'onboarding@resend.dev',
     to: session.user.email,
-    subject: `[우아라빈] 프로젝트 의뢰 접수 완료 — ${inquiryNumber}`,
+    subject: `[루카이든] 프로젝트 의뢰 접수 완료 — ${inquiryNumber}`,
     html: `
       <h2>안녕하세요, ${session.user.name}님!</h2>
       <p>프로젝트 의뢰가 정상적으로 접수되었습니다.</p>

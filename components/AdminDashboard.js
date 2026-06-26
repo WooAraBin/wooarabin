@@ -293,7 +293,7 @@ function PendingPaymentPanel({ inquiry, patch, onUpdate }) {
 
 function StartReviewPanel({ inquiry, patch, onUpdate }) {
   const [note, setNote] = useState(
-    `안녕하세요, ${inquiry.user_name}님.\n\n의뢰하신 프로젝트 "${inquiry.title}"를 검토 중입니다.\n검토 완료 후 견적을 별도 메일로 보내드리겠습니다.\n\n감사합니다.\n우아라빈 드림`
+    `안녕하세요, ${inquiry.user_name}님.\n\n의뢰하신 프로젝트 "${inquiry.title}"를 검토 중입니다.\n검토 완료 후 견적을 별도 메일로 보내드리겠습니다.\n\n감사합니다.\n루카이든 드림`
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

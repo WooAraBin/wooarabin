@@ -47,7 +47,7 @@ export async function PATCH(req, { params }) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inquiry.user_email,
-      subject: `[우아라빈] 프로젝트 검토가 시작되었습니다`,
+      subject: `[루카이든] 프로젝트 검토가 시작되었습니다`,
       html: `
         <h2>안녕하세요, ${inquiry.user_name}님!</h2>
         <p>의뢰하신 프로젝트 <strong>${inquiry.title}</strong> 검토를 시작하였습니다.</p>
@@ -74,7 +74,7 @@ export async function PATCH(req, { params }) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inquiry.user_email,
-      subject: `[우아라빈] 견적서가 도착했습니다 — ${inquiry.title}`,
+      subject: `[루카이든] 견적서가 도착했습니다 — ${inquiry.title}`,
       html: `
         <h2>안녕하세요, ${inquiry.user_name}님!</h2>
         <p>고객님께서 의뢰하신 프로젝트의 견적은 아래와 같으며,${inquiry.deadline ? ` 일정은 요청하신 기한(<strong>${inquiry.deadline}</strong>) 내에 완료될 예정입니다.` : ' 일정은 아래 내용을 참고해 주세요.'}</p>
@@ -122,7 +122,7 @@ export async function PATCH(req, { params }) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inquiry.user_email,
-      subject: `[우아라빈] 결과물을 확인해주세요 — ${inquiry.title}`,
+      subject: `[루카이든] 결과물을 확인해주세요 — ${inquiry.title}`,
       html: `
         <h2>안녕하세요, ${inquiry.user_name}님!</h2>
         <p>프로젝트 <strong>${inquiry.title}</strong>의 결과물이 준비되었습니다. 확인 후 포털에서 완료 버튼을 눌러주세요.</p>

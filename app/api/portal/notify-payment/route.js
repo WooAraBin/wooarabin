@@ -26,7 +26,7 @@ export async function POST(req) {
   await resend.emails.send({
     from: 'onboarding@resend.dev',
     to: process.env.ADMIN_EMAIL,
-    subject: `[우아라빈] ${label} 입금 알림 — ${inquiry.inquiry_number || inquiry.title}`,
+    subject: `[루카이든] ${label} 입금 알림 — ${inquiry.inquiry_number || inquiry.title}`,
     html: `
       <h2>${label} 입금 알림</h2>
       <p><strong>${inquiry.user_name}</strong>님이 ${label} 입금 완료를 알렸습니다.</p>

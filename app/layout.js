@@ -3,7 +3,7 @@ import Header from '@/components/Header'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata = {
-  title: '우아라빈 — Web & App Development',
+  title: '루카이든 — Web & App Development',
   description: '웹·앱 개발, AI 서비스 구축 전문. 아이디어를 현실로 만들어드립니다.',
 }
 

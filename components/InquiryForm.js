@@ -159,7 +159,7 @@ export default function InquiryForm({ user, type = 'new' }) {
         </label>
         <input
           type="text"
-          placeholder={isAs ? '예: 우아라빈 홈페이지 — 메인 배너 수정' : '예: 반려동물 케어 서비스 앱'}
+          placeholder={isAs ? '예: 루카이든 홈페이지 — 메인 배너 수정' : '예: 반려동물 케어 서비스 앱'}
           value={form.title}
           onChange={set('title')}
           style={inputStyle}

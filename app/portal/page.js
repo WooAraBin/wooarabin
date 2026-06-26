@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import CustomerPortal from '@/components/CustomerPortal'
 
-export const metadata = { title: '내 프로젝트 — 우아라빈' }
+export const metadata = { title: '내 프로젝트 — 루카이든' }
 
 export default async function PortalPage() {
   const session = await auth()

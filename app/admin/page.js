@@ -5,7 +5,7 @@ import AdminDashboard from '@/components/AdminDashboard'
 import AdminRevenue from '@/components/AdminRevenue'
 import AdminCustomers from '@/components/AdminCustomers'
 
-export const metadata = { title: '어드민 — 우아라빈' }
+export const metadata = { title: '어드민 — 루카이든' }
 
 export default async function AdminPage({ searchParams }) {
   const session = await auth()

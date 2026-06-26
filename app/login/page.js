@@ -11,7 +11,7 @@ export default async function LoginPage() {
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.5px', marginBottom: 8 }}>우아라빈</div>
+          <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: '-0.5px', marginBottom: 8 }}>루카이든</div>
           <p style={{ color: 'var(--fg2)', fontSize: 14 }}>로그인하고 프로젝트 현황을 확인하세요</p>
         </div>
 

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import InquiryTabs from '@/components/InquiryTabs'
 
 export const metadata = {
-  title: '프로젝트 의뢰 — 우아라빈',
+  title: '프로젝트 의뢰 — 루카이든',
 }
 
 export default async function ContactPage() {

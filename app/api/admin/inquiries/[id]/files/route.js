@@ -65,7 +65,7 @@ export async function POST(req, { params }) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inquiry.user_email,
-      subject: `[우아라빈] 중간 자료가 전달되었습니다 — ${inquiry.title}`,
+      subject: `[루카이든] 중간 자료가 전달되었습니다 — ${inquiry.title}`,
       html: `
         <h2>안녕하세요, ${inquiry.user_name}님!</h2>
         <p>프로젝트 <strong>${inquiry.title}</strong>의 중간 자료를 전달드립니다.</p>

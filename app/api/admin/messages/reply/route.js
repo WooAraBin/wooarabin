@@ -42,7 +42,7 @@ export async function POST(req) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: inq.user_email,
-      subject: `[우아라빈] 문의 답변 — ${inq.title}`,
+      subject: `[루카이든] 문의 답변 — ${inq.title}`,
       html: `
         <h2>안녕하세요, ${inq.user_name}님!</h2>
         <p>문의하신 내용에 대한 답변을 보내드립니다.</p>

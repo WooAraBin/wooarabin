@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: '의뢰 접수 완료 — 우아라빈',
+  title: '의뢰 접수 완료 — 루카이든',
 }
 
 export default function ContactCompletePage() {

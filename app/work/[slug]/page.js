@@ -9,7 +9,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params
   const w = getWork(slug)
-  return { title: w ? `${w.title} — 우아라빈` : '작업물 — 우아라빈' }
+  return { title: w ? `${w.title} — 루카이든` : '작업물 — 루카이든' }
 }
 
 export default async function WorkDetail({ params }) {

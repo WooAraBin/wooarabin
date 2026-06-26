@@ -114,8 +114,8 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <span style={{ fontWeight: 900, fontSize: 16 }}>우아라빈</span>
-          <span style={{ fontSize: 13, color: 'var(--fg2)' }}>© 2026 WooAraBin. All rights reserved.</span>
+          <span style={{ fontWeight: 900, fontSize: 16 }}>루카이든</span>
+          <span style={{ fontSize: 13, color: 'var(--fg2)' }}>© 2026 Lukaiden. All rights reserved.</span>
         </div>
       </footer>
 

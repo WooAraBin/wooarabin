@@ -318,7 +318,7 @@ function CustomerMessage({ inquiryId, messages: initialMessages }) {
               </div>
               {m.reply && (
                 <div style={{ marginLeft: 16, marginTop: 4, padding: '8px 12px', background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8 }}>
-                  <p style={{ fontSize: 11, color: '#3b82f6', fontWeight: 600, margin: '0 0 4px' }}>우아라빈 답변</p>
+                  <p style={{ fontSize: 11, color: '#3b82f6', fontWeight: 600, margin: '0 0 4px' }}>루카이든 답변</p>
                   <p style={{ fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{m.reply}</p>
                   <p style={{ fontSize: 11, color: 'var(--fg2)', margin: '4px 0 0' }}>{new Date(m.replied_at).toLocaleString('ko-KR')}</p>
                 </div>
