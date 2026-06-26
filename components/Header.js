@@ -12,9 +12,15 @@ export default async function Header() {
       backdropFilter: 'blur(12px)'
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-        <Link href="/" style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px', display: 'inline-flex', alignItems: 'flex-end', gap: 3 }}>
+        <Link href="/" style={{
+          fontWeight: 900, fontSize: 22, letterSpacing: '-0.5px',
+          display: 'inline-flex', alignItems: 'center', gap: 7,
+          border: '1.5px solid rgba(232,255,0,0.45)', borderRadius: 12,
+          padding: '6px 14px', background: 'rgba(232,255,0,0.06)',
+          boxShadow: '0 0 16px rgba(232,255,0,0.12)',
+        }}>
           루카이든
-          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', marginBottom: 4, boxShadow: '0 0 8px var(--accent)' }} />
+          <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 12px var(--accent)' }} />
         </Link>
 
         <div style={{ display: 'flex', gap: 24, fontSize: 13, color: 'var(--fg2)', alignItems: 'center' }}>
