@@ -15,6 +15,17 @@ const STATUS_ORDER = ['received', 'reviewing', 'quoted', 'in_progress', 'pending
 export default function AdminDashboard({ initialInquiries }) {
   const [inquiries, setInquiries] = useState(initialInquiries)
   const [selected, setSelected] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+
+  async function deleteAllInquiries() {
+    if (!confirm('모든 의뢰를 삭제합니다.\n\n연결된 문의 메시지·파일·메모까지 전부 삭제됩니다.\n\n되돌릴 수 없습니다. 계속할까요?')) return
+    setDeleting(true)
+    const res = await fetch('/api/admin/inquiries', { method: 'DELETE' })
+    setDeleting(false)
+    if (!res.ok) { alert('삭제에 실패했습니다.'); return }
+    setInquiries([])
+    setSelected(null)
+  }
 
   function updateInquiry(updated) {
     setInquiries(list => list.map(i => i.id === updated.id ? updated : i))
@@ -56,6 +67,14 @@ export default function AdminDashboard({ initialInquiries }) {
         <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--fg2)' }}>
           총 <strong style={{ color: 'var(--fg)' }}>{inquiries.length}</strong>건
         </div>
+        <button onClick={deleteAllInquiries} disabled={deleting || inquiries.length === 0} style={{
+          padding: '7px 12px', background: 'rgba(248,113,113,0.1)', color: '#f87171',
+          border: '1px solid rgba(248,113,113,0.4)', borderRadius: 8, fontSize: 12, fontWeight: 600,
+          cursor: (deleting || inquiries.length === 0) ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+          opacity: (deleting || inquiries.length === 0) ? 0.5 : 1,
+        }}>
+          {deleting ? '삭제 중…' : '의뢰 전부 삭제'}
+        </button>
       </div>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>

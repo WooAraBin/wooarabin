@@ -19,7 +19,6 @@ export default function AdminCustomers({ customers, inquiries = [] }) {
   const rows = list
   const ROLE_OPTIONS = [
     { value: 'user', label: '일반' },
-    { value: 'trainer', label: '훈련사' },
     { value: 'admin', label: '관리자' },
   ]
 

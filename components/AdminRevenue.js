@@ -27,6 +27,21 @@ const STATUS_LABELS_KO = {
 export default function AdminRevenue({ inquiries }) {
   const [list, setList] = useState(inquiries)
   const [selectedMonth, setSelectedMonth] = useState(null) // null = 전체
+  const [resetting, setResetting] = useState(false)
+
+  async function resetAllRevenue() {
+    if (!confirm('모든 매출 기록을 초기화합니다.\n\n입금 확인과 금액이 전부 비워집니다. (의뢰 자체는 삭제되지 않습니다)\n\n되돌릴 수 없습니다. 계속할까요?')) return
+    setResetting(true)
+    const res = await fetch('/api/admin/revenue/reset', { method: 'POST' })
+    setResetting(false)
+    if (!res.ok) { alert('초기화에 실패했습니다.'); return }
+    setList(l => l.map(i => ({
+      ...i,
+      deposit_confirmed: false, deposit_confirmed_at: null,
+      final_confirmed: false, final_confirmed_at: null,
+      deposit_amount: null, final_amount: null,
+    })))
+  }
 
   const now = new Date()
   const thisMonth = now.getMonth()
@@ -114,6 +129,17 @@ export default function AdminRevenue({ inquiries }) {
 
   return (
     <div style={{ padding: '24px 32px' }}>
+
+      {/* 상단 액션 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button onClick={resetAllRevenue} disabled={resetting} style={{
+          padding: '8px 14px', background: 'rgba(248,113,113,0.1)', color: '#f87171',
+          border: '1px solid rgba(248,113,113,0.4)', borderRadius: 8, fontSize: 13, fontWeight: 600,
+          cursor: resetting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: resetting ? 0.6 : 1,
+        }}>
+          {resetting ? '초기화 중…' : '매출 기록 전부 초기화'}
+        </button>
+      </div>
 
       {/* 요약 카드 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>

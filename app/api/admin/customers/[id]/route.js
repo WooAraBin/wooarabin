@@ -19,7 +19,7 @@ export async function PATCH(req, { params }) {
   const update = {}
   if (typeof body.remark === 'string') update.remark = body.remark
   if (body.role !== undefined) {
-    const allowed = ['user', 'admin', 'trainer']
+    const allowed = ['user', 'admin']
     if (!allowed.includes(body.role)) {
       return NextResponse.json({ error: 'invalid role' }, { status: 400 })
     }

@@ -18,33 +18,29 @@ export default async function LoginPage() {
         {/* 소셜 로그인 버튼들 */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-          {/* 카카오 */}
-          <form action={async () => { 'use server'; await signIn('kakao', { redirectTo: '/' }) }}>
-            <button type="submit" style={{
-              width: '100%', padding: '14px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: '#FEE500', color: '#000', fontWeight: 700, fontSize: 15,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              fontFamily: 'inherit',
-            }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 2C5.582 2 2 4.91 2 8.5c0 2.29 1.452 4.3 3.652 5.51L4.8 17.1a.25.25 0 00.36.28l4.02-2.68c.27.03.54.05.82.05 4.418 0 8-2.91 8-6.5S14.418 2 10 2z" fill="#000" fillOpacity=".85"/>
-              </svg>
-              카카오로 로그인
-            </button>
-          </form>
+          {/* 카카오 (준비중 - 비활성화) */}
+          <button type="button" disabled style={{
+            width: '100%', padding: '14px 20px', borderRadius: 8, border: 'none', cursor: 'not-allowed',
+            background: '#e5e5e5', color: '#999', fontWeight: 700, fontSize: 15,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+            fontFamily: 'inherit',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2C5.582 2 2 4.91 2 8.5c0 2.29 1.452 4.3 3.652 5.51L4.8 17.1a.25.25 0 00.36.28l4.02-2.68c.27.03.54.05.82.05 4.418 0 8-2.91 8-6.5S14.418 2 10 2z" fill="#999"/>
+            </svg>
+            카카오로 로그인
+          </button>
 
-          {/* 네이버 */}
-          <form action={async () => { 'use server'; await signIn('naver', { redirectTo: '/' }) }}>
-            <button type="submit" style={{
-              width: '100%', padding: '14px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: '#03C75A', color: '#fff', fontWeight: 700, fontSize: 15,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              fontFamily: 'inherit',
-            }}>
-              <span style={{ fontWeight: 900, fontSize: 18, lineHeight: 1 }}>N</span>
-              네이버로 로그인
-            </button>
-          </form>
+          {/* 네이버 (준비중 - 비활성화) */}
+          <button type="button" disabled style={{
+            width: '100%', padding: '14px 20px', borderRadius: 8, border: 'none', cursor: 'not-allowed',
+            background: '#e5e5e5', color: '#999', fontWeight: 700, fontSize: 15,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+            fontFamily: 'inherit',
+          }}>
+            <span style={{ fontWeight: 900, fontSize: 18, lineHeight: 1 }}>N</span>
+            네이버로 로그인
+          </button>
 
           {/* 구글 */}
           <form action={async () => { 'use server'; await signIn('google', { redirectTo: '/' }) }}>
@@ -64,6 +60,10 @@ export default async function LoginPage() {
             </button>
           </form>
         </div>
+
+        <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--fg2)', marginTop: 16 }}>
+          현재는 구글로만 가입하실 수 있습니다.
+        </p>
 
         <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--fg2)', marginTop: 32, lineHeight: 1.7 }}>
           로그인 시 <a href="#" style={{ color: 'var(--fg2)', textDecoration: 'underline' }}>이용약관</a> 및{' '}
