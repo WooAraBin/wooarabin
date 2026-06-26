@@ -34,7 +34,11 @@ export default function AdminRevenue({ inquiries }) {
     setResetting(true)
     const res = await fetch('/api/admin/revenue/reset', { method: 'POST' })
     setResetting(false)
-    if (!res.ok) { alert('초기화에 실패했습니다.'); return }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      alert(`초기화에 실패했습니다.\n\n${data.error || res.status}`)
+      return
+    }
     setList(l => l.map(i => ({
       ...i,
       deposit_confirmed: false, deposit_confirmed_at: null,

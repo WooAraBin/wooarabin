@@ -145,5 +145,35 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ ok: true, status: 'completed' })
   }
 
+  // 종결 처리 (고객 미응답/거절 등으로 진행 중단)
+  if (action === 'cancel') {
+    const { reason } = body
+    const { error } = await getSupabaseAdmin()
+      .from('inquiries')
+      .update({ status: 'cancelled' })
+      .eq('id', id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    // 종결 사유는 내부 메모로 기록 (스키마 변경 없이)
+    if (reason?.trim()) {
+      const { error: noteError } = await getSupabaseAdmin()
+        .from('inquiry_notes')
+        .insert({ inquiry_id: id, content: `[종결] ${reason.trim()}` })
+      if (noteError) console.error('Cancel note error:', noteError.message)
+    }
+
+    return NextResponse.json({ ok: true, status: 'cancelled' })
+  }
+
+  // 종결 취소 → 견적발송 상태로 복원
+  if (action === 'reopen') {
+    const { error } = await getSupabaseAdmin()
+      .from('inquiries')
+      .update({ status: 'quoted' })
+      .eq('id', id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ ok: true, status: 'quoted' })
+  }
+
   return NextResponse.json({ error: '알 수 없는 액션입니다.' }, { status: 400 })
 }

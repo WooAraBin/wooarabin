@@ -9,6 +9,7 @@ const STATUS_LABELS = {
   in_progress:     { label: '진행중',        color: '#10b981' },
   pending_payment: { label: '완료·입금대기', color: '#f97316' },
   completed:       { label: '최종완료',      color: '#8b5cf6' },
+  cancelled:       { label: '종결',          color: '#9ca3af' },
 }
 const STATUS_ORDER = ['received', 'reviewing', 'quoted', 'in_progress', 'pending_payment', 'completed']
 
@@ -22,7 +23,11 @@ export default function AdminDashboard({ initialInquiries }) {
     setDeleting(true)
     const res = await fetch('/api/admin/inquiries', { method: 'DELETE' })
     setDeleting(false)
-    if (!res.ok) { alert('삭제에 실패했습니다.'); return }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      alert(`삭제에 실패했습니다.\n\n${data.error || res.status}`)
+      return
+    }
     setInquiries([])
     setSelected(null)
   }
@@ -64,6 +69,16 @@ export default function AdminDashboard({ initialInquiries }) {
             </div>
           )
         })}
+        {(() => {
+          const cancelled = inquiries.filter(i => i.status === 'cancelled').length
+          return cancelled > 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 14px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10 }}>
+              <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#9ca3af' }} />
+              <span style={{ fontSize: 12, color: 'var(--fg2)' }}>종결</span>
+              <span style={{ fontSize: 17, fontWeight: 900, color: '#9ca3af' }}>{cancelled}</span>
+            </div>
+          ) : null
+        })()}
         <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--fg2)' }}>
           총 <strong style={{ color: 'var(--fg)' }}>{inquiries.length}</strong>건
         </div>
@@ -144,7 +159,12 @@ export default function AdminDashboard({ initialInquiries }) {
                 <h2 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px' }}>{selected.title}</h2>
               </div>
 
-              {/* 진행 단계 표시 */}
+              {/* 진행 단계 표시 (종결 건은 배너로 대체) */}
+              {selected.status === 'cancelled' ? (
+                <div style={{ marginBottom: 28, padding: '14px 18px', background: 'rgba(156,163,175,0.12)', border: '1px solid rgba(156,163,175,0.4)', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 10, color: '#9ca3af', fontWeight: 700, fontSize: 14 }}>
+                  ⛔ 종결된 의뢰입니다. (진행 중단)
+                </div>
+              ) : (
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: 28, gap: 0 }}>
                 {STATUS_ORDER.map((key, i) => {
                   const { label, color } = STATUS_LABELS[key]
@@ -172,6 +192,7 @@ export default function AdminDashboard({ initialInquiries }) {
                   )
                 })}
               </div>
+              )}
 
               {/* 고객 이력 */}
               <ClientHistory inquiries={inquiries} selected={selected} onSelect={setSelected} />
@@ -250,17 +271,20 @@ function ActionPanel({ inquiry, onUpdate }) {
     return res.json()
   }
 
+  // 종결된 의뢰: 복원(되돌리기)만 제공
+  if (inquiry.status === 'cancelled') {
+    return <CancelledPanel inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  }
+
+  let panel = null
   if (inquiry.status === 'received') {
-    return <StartReviewPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
-  }
-  if (inquiry.status === 'reviewing') {
-    return <SendQuotePanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
-  }
-  if (inquiry.status === 'quoted') {
-    return <StartWorkPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
-  }
-  if (inquiry.status === 'in_progress') {
-    return (
+    panel = <StartReviewPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  } else if (inquiry.status === 'reviewing') {
+    panel = <SendQuotePanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  } else if (inquiry.status === 'quoted') {
+    panel = <StartWorkPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  } else if (inquiry.status === 'in_progress') {
+    panel = (
       <>
         <InterimFilesPanel inquiry={inquiry} />
         <div style={{ margin: '16px 0', borderTop: '1px dashed var(--border)', position: 'relative' }}>
@@ -269,11 +293,9 @@ function ActionPanel({ inquiry, onUpdate }) {
         <DeliveryPanel id={id} inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
       </>
     )
-  }
-  if (inquiry.status === 'pending_payment') {
-    return <PendingPaymentPanel inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
-  }
-  if (inquiry.status === 'completed') {
+  } else if (inquiry.status === 'pending_payment') {
+    panel = <PendingPaymentPanel inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+  } else if (inquiry.status === 'completed') {
     return (
       <div style={{ padding: '20px 0', color: '#8b5cf6', fontWeight: 700, fontSize: 15 }}>
         ✓ 최종 완료된 프로젝트입니다.
@@ -284,8 +306,67 @@ function ActionPanel({ inquiry, onUpdate }) {
         )}
       </div>
     )
+  } else {
+    return null
   }
-  return null
+
+  // 완료 전 단계는 언제든 종결 가능 (고객 미응답/거절 등)
+  return (
+    <>
+      {panel}
+      <CancelButton inquiry={inquiry} patch={patch} onUpdate={onUpdate} />
+    </>
+  )
+}
+
+function CancelButton({ inquiry, patch, onUpdate }) {
+  const [loading, setLoading] = useState(false)
+
+  async function handleCancel() {
+    const reason = prompt('종결 사유를 입력하세요. (선택 — 내부 메모로 기록됩니다)\n예: 고객 미응답 / 고객 거절', '')
+    if (reason === null) return // 취소
+    setLoading(true)
+    const res = await patch({ action: 'cancel', reason })
+    setLoading(false)
+    if (res.ok) onUpdate({ ...inquiry, status: 'cancelled' })
+    else alert(`종결 처리 실패:\n${res.error || ''}`)
+  }
+
+  return (
+    <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px dashed var(--border)' }}>
+      <button onClick={handleCancel} disabled={loading} style={{
+        padding: '9px 14px', background: 'transparent', color: '#9ca3af',
+        border: '1px solid rgba(156,163,175,0.5)', borderRadius: 8, fontSize: 13, fontWeight: 600,
+        cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+      }}>
+        {loading ? '처리 중…' : '⛔ 이 의뢰 종결 처리'}
+      </button>
+      <p style={{ fontSize: 11, color: 'var(--fg2)', marginTop: 6 }}>
+        고객이 응답하지 않거나 진행하지 않기로 한 경우 종결합니다. (나중에 되돌릴 수 있음)
+      </p>
+    </div>
+  )
+}
+
+function CancelledPanel({ inquiry, patch, onUpdate }) {
+  const [loading, setLoading] = useState(false)
+
+  async function handleReopen() {
+    if (!confirm('이 의뢰를 다시 진행 상태(견적발송)로 되돌릴까요?')) return
+    setLoading(true)
+    const res = await patch({ action: 'reopen' })
+    setLoading(false)
+    if (res.ok) onUpdate({ ...inquiry, status: 'quoted' })
+    else alert(`되돌리기 실패:\n${res.error || ''}`)
+  }
+
+  return (
+    <ActionBox title="⛔ 종결된 의뢰" description="진행이 중단된 의뢰입니다. 필요 시 다시 진행 상태로 되돌릴 수 있습니다.">
+      <ActionBtn loading={loading} color="#6b7280" onClick={handleReopen}>
+        견적발송 상태로 되돌리기
+      </ActionBtn>
+    </ActionBox>
+  )
 }
 
 function PendingPaymentPanel({ inquiry, patch, onUpdate }) {
@@ -526,7 +607,8 @@ function DeliveryPanel({ inquiry, patch, onUpdate }) {
 
     const res = await patch({ action: 'complete', deliveryNote: note, deliveryFileUrl: fileUrl })
     if (res.ok) {
-      onUpdate({ ...inquiry, status: 'completed', delivery_note: note, delivery_file_url: fileUrl })
+      // 납품해도 상태는 in_progress 유지 (고객이 포털에서 완료 확인해야 pending_payment 전환)
+      onUpdate({ ...inquiry, status: 'in_progress', delivery_note: note, delivery_file_url: fileUrl })
     } else {
       setError(res.error || '오류가 발생했습니다.')
     }

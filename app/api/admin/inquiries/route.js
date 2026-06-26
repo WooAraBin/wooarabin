@@ -15,18 +15,17 @@ export async function DELETE() {
   }
 
   const db = getSupabaseAdmin()
-  // 자식 레코드 먼저 삭제 (FK 제약 회피)
+  // 자식 레코드 먼저 삭제 (FK 제약 회피). 자식 삭제 오류는 무시(없는 테이블 등) 후 부모 시도.
   const children = ['customer_messages', 'project_files', 'inquiry_notes', 'deliveries']
   for (const table of children) {
-    const { error } = await db.from(table).delete().not('id', 'is', null)
-    // 테이블이 없거나 컬럼 구조가 다른 경우는 무시하고 진행
-    if (error && !/does not exist|relation/i.test(error.message)) {
-      return NextResponse.json({ error: `${table}: ${error.message}` }, { status: 500 })
-    }
+    await db.from(table).delete().not('id', 'is', null)
   }
 
   const { error } = await db.from('inquiries').delete().not('id', 'is', null)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    // 정확한 원인을 그대로 노출 (FK 위반 테이블명 등)
+    return NextResponse.json({ error: `${error.message}${error.details ? ` (${error.details})` : ''}` }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }
