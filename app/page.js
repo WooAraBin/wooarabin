@@ -15,7 +15,10 @@ export default function Home() {
       {/* Hero */}
       <section style={{ paddingTop: 160, paddingBottom: 120 }}>
         <div className="container">
-          <p style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700, letterSpacing: '.1em', marginBottom: 20 }}>WEB · APP · AI DEVELOPMENT</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 900, color: 'var(--accent)', letterSpacing: '.22em', textShadow: '0 0 24px rgba(232,255,0,0.45)' }}>LUKAIDEN</span>
+            <span style={{ fontSize: 12, color: 'var(--fg2)', fontWeight: 700, letterSpacing: '.1em' }}>웹 · 앱 · AI 개발</span>
+          </div>
           <h1 style={{ fontSize: 'clamp(48px, 8vw, 96px)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '-2px', marginBottom: 32 }}>
             아이디어를<br />현실로 만듭니다
           </h1>
@@ -114,7 +117,10 @@ export default function Home() {
       {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <span style={{ fontWeight: 900, fontSize: 16 }}>루카이든</span>
+          <span style={{ fontWeight: 900, fontSize: 16, display: 'inline-flex', alignItems: 'flex-end', gap: 3 }}>
+            루카이든
+            <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', marginBottom: 3, boxShadow: '0 0 8px var(--accent)' }} />
+          </span>
           <span style={{ fontSize: 13, color: 'var(--fg2)' }}>© 2026 Lukaiden. All rights reserved.</span>
         </div>
       </footer>

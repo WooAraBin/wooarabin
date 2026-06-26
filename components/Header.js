@@ -12,7 +12,10 @@ export default async function Header() {
       backdropFilter: 'blur(12px)'
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
-        <Link href="/" style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px' }}>루카이든</Link>
+        <Link href="/" style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px', display: 'inline-flex', alignItems: 'flex-end', gap: 3 }}>
+          루카이든
+          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', marginBottom: 4, boxShadow: '0 0 8px var(--accent)' }} />
+        </Link>
 
         <div style={{ display: 'flex', gap: 24, fontSize: 13, color: 'var(--fg2)', alignItems: 'center' }}>
           <Link href="/#work">작업물</Link>
